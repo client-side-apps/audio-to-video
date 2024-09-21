@@ -16,13 +16,15 @@
 	<h1>Image Audio to Video</h1>
 
 	<input type="file" id="imageInput" accept="image/*">
+	<img id="imagePreview" width="320" height="240" style="display: none;">
 	<input type="file" id="audioInput" accept="audio/*">
+	<audio id="audioPreview" controls style="display: none;"></audio>
 
 	<button id="createBtn" disabled>Create Video</button>
 
 	<progress id="progressBar" value="0" max="100"></progress>
 
-	
+	<video id="videoPreview" width="320" height="240" controls style="display: none;"></video>
 
 	<button id="downloadBtn" style="display: none;">Download Video</button>
 
@@ -46,6 +48,9 @@
 		const createBtn = document.getElementById('createBtn');
 		const downloadBtn = document.getElementById('downloadBtn');
 		const progressBar = document.getElementById('progressBar');
+		const imagePreview = document.getElementById('imagePreview');
+		const audioPreview = document.getElementById('audioPreview');
+		const videoPreview = document.getElementById('videoPreview');
 
 		let imageData;
 		let audioData;
@@ -57,6 +62,9 @@
 			if(imageData && audioData){
 				createBtn.disabled = false;
 			}
+			const imageUrl = URL.createObjectURL(file);
+			imagePreview.src = imageUrl;
+			imagePreview.style.display = 'block';
 		});
 
 		audioInput.addEventListener('change', async (e) => {
@@ -65,13 +73,16 @@
 			if(imageData && audioData){
 				createBtn.disabled = false;
 			}
+			const audioUrl = URL.createObjectURL(file);
+			audioPreview.src = audioUrl;
+			audioPreview.style.display = 'block';
 		});
 
 		downloadBtn.addEventListener('click', () => {
 			const url = URL.createObjectURL(new Blob([videoData], { type: 'video/mp4' }));
 			const link = document.createElement('a');
 			link.href = url;
-			link.download = 'output.mp4';
+			link.download = 'video.mp4';
 			link.click();
 		});
 
@@ -91,6 +102,9 @@
 			//await ffmpeg.exec('-loop', '1', '-i', 'image.jpg', '-i', 'audio.mp3', '-c:v', 'libx264', '-tune', 'stillimage', '-c:a', 'aac', '-b:a', '192k', '-pix_fmt', 'yuv420p', '-shortest', 'output.mp4');
 
 			videoData = ffmpeg.readFile('video.mp4');
+			const videoUrl = URL.createObjectURL(new Blob([videoData], { type: 'video/mp4' }));
+			videoPreview.src = videoUrl;
+			videoPreview.style.display = 'block';
 
 			downloadBtn.style.display = 'block';
 		}
