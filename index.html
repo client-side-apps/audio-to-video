@@ -13,7 +13,7 @@
 
 <body>
 
-	<h1>Image Audio to Video</h1>
+	<h1>Image and Audio to Video converter</h1>
 
 	<input type="file" id="imageInput" accept="image/*">
 	<img id="imagePreview" width="320" height="240" style="display: none;">
@@ -97,12 +97,14 @@
 			ffmpeg.writeFile('image.png', new Uint8Array(imageData));
 			ffmpeg.writeFile('audio.mp3', new Uint8Array(audioData));
 
-			await ffmpeg.exec(["-loop","1","-i","image.png","-i","audio.mp3","-shortest","video.mp4"]);
-		
+			console.log("converting");
+			await ffmpeg.exec(["-loop","1","-i","image.png","-i","audio.mp3","-tune","stillimage","-shortest","video.mp4"]);
+			console.log("converted");
+
 			//await ffmpeg.exec('-loop', '1', '-i', 'image.jpg', '-i', 'audio.mp3', '-c:v', 'libx264', '-tune', 'stillimage', '-c:a', 'aac', '-b:a', '192k', '-pix_fmt', 'yuv420p', '-shortest', 'output.mp4');
 
-			videoData = ffmpeg.readFile('video.mp4');
-			const videoUrl = URL.createObjectURL(new Blob([videoData], { type: 'video/mp4' }));
+			videoData = await ffmpeg.readFile('video.mp4');
+			const videoUrl = URL.createObjectURL(new Blob([videoData.buffer], { type: 'video/mp4' }));
 			videoPreview.src = videoUrl;
 			videoPreview.style.display = 'block';
 
