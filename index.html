@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Image Audio to Video</title>
+	<style>
+		body {
+			font-family: sans-serif;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<h1>Image Audio to Video</h1>
+
+	<input type="file" id="imageInput" accept="image/*">
+	<input type="file" id="audioInput" accept="audio/*">
+
+	<button id="createBtn">Create Video</button>
+
+	<progress id="progressBar" value="0" max="100"></progress>
+
+	
+
+	<button id="downloadBtn" style="display: none;">Download Video</button>
+
+	<script type="module">
+		// Load ffmpeg.wasm
+		import { fetchFile } from "/node_modules/@ffmpeg/util/dist/esm/index.js";
+		import { FFmpeg } from "/node_modules/@ffmpeg/ffmpeg/dist/esm/index.js";
+
+
+		const baseURL = '/node_modules/@ffmpeg/core/dist/esm';
+		const ffmpeg = new FFmpeg()
+		await ffmpeg.load({
+			coreURL: await `${baseURL}/ffmpeg-core.js`,
+			wasmURL: await `${baseURL}/ffmpeg-core.wasm`,
+			workerURL: await `${baseURL}/ffmpeg-core.worker.js`,
+		});
+
+
+		const imageInput = document.getElementById('imageInput');
+		const audioInput = document.getElementById('audioInput');
+		const createBtn = document.getElementById('createBtn');
+		const downloadBtn = document.getElementById('downloadBtn');
+		const progressBar = document.getElementById('progressBar');
+
+		let imageData = null;
+		let audioData = null;
+
+		imageInput.addEventListener('change', async (e) => {
+			const file = e.target.files[0];
+			imageData = await fetchFile(file);
+		});
+
+		audioInput.addEventListener('change', async (e) => {
+			const file = e.target.files[0];
+			audioData = await fetchFile(file);
+		});
+
+		downloadBtn.addEventListener('click', () => {
+			const url = URL.createObjectURL(new Blob([videoData], { type: 'video/mp4' }));
+			const link = document.createElement('a');
+			link.href = url;
+			link.download = 'output.mp4';
+			link.click();
+		});
+
+		createBtn.addEventListener('click', createVideo);
+
+		async function createVideo() {
+			if (!imageData || !audioData) {
+				alert('Please select both an image and an audio file.');
+				return;
+			}
+
+			ffmpeg.writeFile('image.png', new Uint8Array(imageData));
+			ffmpeg.writeFile('audio.mp3', new Uint8Array(audioData));
+
+			await ffmpeg.exec(["-loop","1","-i","image.png","-i","audio.mp3","-shortest","video.mp4"]);
+		
+			//await ffmpeg.exec('-loop', '1', '-i', 'image.jpg', '-i', 'audio.mp3', '-c:v', 'libx264', '-tune', 'stillimage', '-c:a', 'aac', '-b:a', '192k', '-pix_fmt', 'yuv420p', '-shortest', 'output.mp4');
+
+			const videoData = ffmpeg.readFile('video.mp4');
+
+			downloadBtn.style.display = 'block';
+		}
+
+		ffmpeg.on("log", ({ message }) => {
+			console.log(message);
+		});
+
+		ffmpeg.on("progress", ({ progress, time }) => {
+			progressBar.value = progress * 100;
+		});
+	</script>
+
+</body>
+
+</html>
