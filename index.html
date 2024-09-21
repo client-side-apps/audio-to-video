@@ -2,10 +2,74 @@
 <html>
 
 <head>
-	<title>Image Audio to Video</title>
+	<title>Audio to Video client-side converter</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:creator" content="@steren">
+	<meta name="twitter:title" content="Audio to Video converter">
+	<meta name="twitter:image" content="https://audio-to-video.client-side.app/icons/title.png">
+  
+	<meta property="og:type" content="article">
+	<meta property="og:title" content="Audio to Video converter">
+	<meta property="og:image" content="https://audio-to-video.client-side.app/icons/title.png">
+  
+	<script type="application/ld+json">
+	{
+	  "@context": "http://schema.org",
+	  "@type": "WebSite",
+	  "author": "Steren Giannini",
+	  "name": "Audio to Video converter",
+	  "image": "https://audio-to-video.client-side.app/icons/title.png"
+	}
+	</script>
+
 	<style>
-		body {
+		html {
+			max-width: 70ch;
+			padding: 3em 1em;
+			margin: auto;
+			line-height: 1.75;
+			font-size: 1.25em;
 			font-family: sans-serif;
+		}
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			margin: 3em 0 1em;
+		}
+
+		p,
+		ul,
+		ol {
+			margin-bottom: 2em;
+		}
+
+		img,
+		stereo-img {
+			width: 100%;
+		}
+
+		.icon {
+			float: left;
+			margin-right: 1em;
+			width: 3em;
+			height: 3em;
+		}
+
+		pre {
+			overflow-x: auto;
+			font-size: 0.8em;
+		}
+
+		footer {
+			font-size: small;
 		}
 	</style>
 
@@ -13,20 +77,35 @@
 
 <body>
 
-	<h1>Image and Audio to Video converter</h1>
+	<header>
+		<!-- <img src="icons/icon.svg" alt="icon" class="icon"> -->
+		<h1>Audio to Video converter</h1>
+		<p>
+			A client-side webapp to transform an audio file (for example .mp3) into a video file (.mp4).<br>
+			Audio and video files are <b>not</b> uploaded to any server, they are converted in your browser.
+		</p>
+	</header>
 
-	<input type="file" id="imageInput" accept="image/*">
-	<img id="imagePreview" width="320" height="240" style="display: none;">
-	<input type="file" id="audioInput" accept="audio/*">
-	<audio id="audioPreview" controls style="display: none;"></audio>
+	<main>
+		<input type="file" id="imageInput" accept="image/*">
+		<img id="imagePreview" width="320" height="240" style="display: none;">
+		<input type="file" id="audioInput" accept="audio/*">
+		<audio id="audioPreview" controls style="display: none;"></audio>
 
-	<button id="createBtn" disabled>Create Video</button>
+		<button id="createBtn" disabled>Create Video</button>
 
-	<progress id="progressBar" value="0" max="100"></progress>
+		<progress id="progressBar" value="0" max="100"></progress>
 
-	<video id="videoPreview" width="320" height="240" controls style="display: none;"></video>
+		<video id="videoPreview" width="320" height="240" controls style="display: none;"></video>
 
-	<button id="downloadBtn" style="display: none;">Download Video</button>
+		<button id="downloadBtn" style="display: none;">Download Video</button>
+	</main>
+
+	<footer>
+		<p>
+			Built by <a target="_blank" href="https://steren.fr">Steren</a> using <a target="_blank" href="https://github.com/ffmpegwasm/ffmpeg.wasm">ffmpeg.wasm</a> (<a href="https://github.com/client-side-apps/audio-to-video">source code</a>).
+		</p>
+	</footer>
 
 	<script type="module">
 		// Load ffmpeg.wasm
@@ -59,7 +138,7 @@
 		imageInput.addEventListener('change', async (e) => {
 			const file = e.target.files[0];
 			imageData = await fetchFile(file);
-			if(imageData && audioData){
+			if (imageData && audioData) {
 				createBtn.disabled = false;
 			}
 			const imageUrl = URL.createObjectURL(file);
@@ -70,7 +149,7 @@
 		audioInput.addEventListener('change', async (e) => {
 			const file = e.target.files[0];
 			audioData = await fetchFile(file);
-			if(imageData && audioData){
+			if (imageData && audioData) {
 				createBtn.disabled = false;
 			}
 			const audioUrl = URL.createObjectURL(file);
@@ -98,7 +177,7 @@
 			ffmpeg.writeFile('audio.mp3', new Uint8Array(audioData));
 
 			console.log("converting");
-			await ffmpeg.exec(["-loop","1","-i","image.png","-i","audio.mp3","-tune","stillimage","-shortest","video.mp4"]);
+			await ffmpeg.exec(["-loop", "1", "-i", "image.png", "-i", "audio.mp3", "-tune", "stillimage", "-shortest", "video.mp4"]);
 			console.log("converted");
 
 			//await ffmpeg.exec('-loop', '1', '-i', 'image.jpg', '-i', 'audio.mp3', '-c:v', 'libx264', '-tune', 'stillimage', '-c:a', 'aac', '-b:a', '192k', '-pix_fmt', 'yuv420p', '-shortest', 'output.mp4');
