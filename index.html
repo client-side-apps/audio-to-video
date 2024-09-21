@@ -47,8 +47,9 @@
 		const downloadBtn = document.getElementById('downloadBtn');
 		const progressBar = document.getElementById('progressBar');
 
-		let imageData = null;
-		let audioData = null;
+		let imageData;
+		let audioData;
+		let videoData;
 
 		imageInput.addEventListener('change', async (e) => {
 			const file = e.target.files[0];
@@ -83,7 +84,7 @@
 		
 			//await ffmpeg.exec('-loop', '1', '-i', 'image.jpg', '-i', 'audio.mp3', '-c:v', 'libx264', '-tune', 'stillimage', '-c:a', 'aac', '-b:a', '192k', '-pix_fmt', 'yuv420p', '-shortest', 'output.mp4');
 
-			const videoData = ffmpeg.readFile('video.mp4');
+			videoData = ffmpeg.readFile('video.mp4');
 
 			downloadBtn.style.display = 'block';
 		}
