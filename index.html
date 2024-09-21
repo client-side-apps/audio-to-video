@@ -18,7 +18,7 @@
 	<input type="file" id="imageInput" accept="image/*">
 	<input type="file" id="audioInput" accept="audio/*">
 
-	<button id="createBtn">Create Video</button>
+	<button id="createBtn" disabled>Create Video</button>
 
 	<progress id="progressBar" value="0" max="100"></progress>
 
@@ -54,11 +54,17 @@
 		imageInput.addEventListener('change', async (e) => {
 			const file = e.target.files[0];
 			imageData = await fetchFile(file);
+			if(imageData && audioData){
+				createBtn.disabled = false;
+			}
 		});
 
 		audioInput.addEventListener('change', async (e) => {
 			const file = e.target.files[0];
 			audioData = await fetchFile(file);
+			if(imageData && audioData){
+				createBtn.disabled = false;
+			}
 		});
 
 		downloadBtn.addEventListener('click', () => {
