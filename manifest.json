@@ -1,0 +1,24 @@
+{
+    "short_name": "Audio->Video",
+    "id": "autio-to-video",
+    "name": "Audio to Video",
+    "description": "A client-side webapp to transform audio files to video",
+    "icons": [
+      {
+        "src": "icons/icon.svg",
+        "sizes": "any",
+        "type": "image/svg+xml"
+      },
+      {
+        "src": "icons/icon.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "screenshots": [],
+    "start_url": "/",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#c00",
+    "background_color": "#000000"
+  }

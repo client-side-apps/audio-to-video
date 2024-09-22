@@ -26,6 +26,8 @@
 	}
 	</script>
 
+	<link rel="manifest" href="manifest.json">
+
 	<style>
 		html {
 			max-width: 70ch;
@@ -205,6 +207,10 @@
 		ffmpeg.on("progress", ({ progress, time }) => {
 			progressBar.value = progress * 100;
 		});
+	</script>
+
+	<script>
+		navigator.serviceWorker.register('sw.js')
 	</script>
 
 </body>
