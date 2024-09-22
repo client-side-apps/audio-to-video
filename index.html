@@ -87,14 +87,20 @@
 	</header>
 
 	<main>
-		<input type="file" id="imageInput" accept="image/*">
-		<img id="imagePreview" width="320" height="240" style="display: none;">
-		<input type="file" id="audioInput" accept="audio/*">
-		<audio id="audioPreview" controls style="display: none;"></audio>
+		<div>
+			<label for="audioInput">Select an audio file:</label>
+			<input type="file" id="audioInput" accept="audio/*">
+			<audio id="audioPreview" controls style="display: none;"></audio>
+		</div>
+		<div>
+			<label for="imageInput">Select an image:</label>
+			<input type="file" id="imageInput" accept="image/*">
+			<img id="imagePreview" width="320" height="240" style="display: none;">
+		</div>
 
 		<button id="createBtn" disabled>Create Video</button>
 
-		<progress id="progressBar" value="0" max="100"></progress>
+		<progress id="progressBar" value="0" max="100" style="display: none;"></progress>
 
 		<video id="videoPreview" width="320" height="240" controls style="display: none;"></video>
 
@@ -172,6 +178,8 @@
 				alert('Please select both an image and an audio file.');
 				return;
 			}
+
+			progressBar.style.display = 'block';
 
 			ffmpeg.writeFile('image.png', new Uint8Array(imageData));
 			ffmpeg.writeFile('audio.mp3', new Uint8Array(audioData));
